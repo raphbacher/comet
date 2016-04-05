@@ -48,9 +48,9 @@ class Detection:
             Im.data=proba_tools.calcPvalue(self.listCorrArr[-1])
             self.listPvalMap.append(Im)
             Im2=src.cubes['PROCESS_CUBE'][0,:,:].clone()
-            Im2.data=np.argmax(self.listCorrArr[-1])
+            Im2.data=np.argmax(self.listCorrArr[-1],axis=0)
             self.listIndexMap.append(Im2)
-            return self.listPvalMap
+            return self.listPvalMap,self.listIndexMap
                 
     def getCorrMap(self,source):
         """
@@ -66,12 +66,12 @@ class Detection:
             refPos=[zone.shape[1]/2,zone.shape[2]/2]
         
         if self.params.SW is not None: # Resize zone of study accordingly
-            zone=zone[max(refPos[0]-self.params.SW,0):min(refPos[0]+self.params.SW+1, \
+            zone=zone[:,max(refPos[0]-self.params.SW,0):min(refPos[0]+self.params.SW+1, \
             zone.shape[1]),max(refPos[1]-self.params.SW,0):min(refPos[1]+self.params.SW+1,zone.shape[2])]
             refPos=[zone.shape[1]/2,zone.shape[2]/2]
         
         zoneLarge=zone[max(lmbda-self.params.LW-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.params.lmbdaShift+1,zone.shape[0]),:,:]
-        zoneCentr=zone[max(lmbda-self.params.LW,0):min(lmbda+self.params.LW+1,zone.shape[0]),:,:]
+        zoneCentr=zone[max(lmbda-self.params.LW+1,0):min(lmbda+self.params.LW,zone.shape[0]),:,:] #it is necessary to center between -LW+1 and LW (so a width of 2LW-1 instead of classical 2LW+1) to allow a shift of -lmbdashift:lmbdashift+1
         
         
         #centering (or not)    

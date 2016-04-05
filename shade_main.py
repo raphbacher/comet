@@ -106,8 +106,8 @@ class SHADE():
         
         self.detection=detection.Detection(listSources=self.listSources,params=self.params,paramsPreProcess=self.paramsPreProcess,paramsDetection=self.paramsDetection)
         
-        self.listPvalMap=self.detection.detect()
-        self.listIndexMap=self.detection.listIndexMap
+        self.listPvalMap,self.listIndexMap=self.detection.detect()
+        
   
     def postprocess(self,rawCube=None,paramsPostProcess=None):
         if paramsPostProcess is not None:
