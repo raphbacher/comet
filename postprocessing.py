@@ -65,7 +65,7 @@ class Postprocess():
             
     
     
-    def corrPvalueBH(self,im):
+    def corrPvalueBH(self,im,threshold):
         """
         Entrées: 
             im : l'ensemble des pvalues du test
@@ -75,7 +75,7 @@ class Postprocess():
         """
         l=np.sort(im.data.flatten())
         k=len(l)-1
-        while (l[k] > ((k+1)/float(len(l))*self.paramsPostProcess.threshold)) and k>0:
+        while (l[k] > ((k+1)/float(len(l))*threshold)) and k>0:
             k=k-1
         self.thresholdFDR=l[k]
         return self.thresholdFDR
@@ -84,7 +84,7 @@ class Postprocess():
     def createBinMap(self,Im):
         Im1=Im.copy()        
         if self.paramsPostProcess.FDR == True:
-            Im1.data=Im.data<self.corrPvalueBH(Im)
+            Im1.data=Im.data<self.corrPvalueBH(Im,self.paramsPostProcess.threshold)
         else:
             Im1.data=Im.data<self.paramsPostProcess.threshold
         return Im1            

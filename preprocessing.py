@@ -39,7 +39,7 @@ class Preprocessing():
             else:
                 data=src.cubes['MUSE_CUBE']
             if self.paramsPreProcess.unmask==True:
-                data.data[:]=data.data.filled(np.median(data.data))
+                data.data[:]=data.data.filled(np.nanmedian(data.data))
             if self.params.sim == False :
                 lmbda=int(data.wave.pixel(src.lines['LBDA_OBS'][src.lines['LINE']=='LYA'][0]))
             else:

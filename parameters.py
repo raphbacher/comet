@@ -48,7 +48,7 @@ class ParamsPreProcess():
     with the allCube processing. 0 for Pmin and -1 for Pmax mean no trimming.
     Param: int lmbdaMin and lmbdaMax, trim some wavelength if allCube processing.
     Param: bool forceProcess, force a new preprocessing of sources even if sources have already a "PROCESS_CUBE"
-    Param: unmask=True, unmask masked array with median filled values to speed up calculations.
+    Param: unmask=True, unmask masked array with median filled values to speed up calculations. MUST BE SET TO TRUE FOR NOW (unsolved bugs due to nan values)
     """
     def __init__(self,
                  allCube=False,

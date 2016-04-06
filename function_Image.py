@@ -35,8 +35,11 @@ def fine_clipping(Image1, niter = 3, fact_value = 0.9, Pmin = 0, Pmax = -1, Qmin
     facttrunc = norm.ppf(fact_value)
     correction = norm.ppf((0.75*( 2*norm.cdf(facttrunc)-1 ) + (1 - norm.cdf(facttrunc)) )) - norm.ppf(0.25*( 2*norm.cdf(facttrunc)-1 ) + (1 - norm.cdf(facttrunc)) )
     medclip = np.nanmedian(xclip)
-    x=x.filled(medclip)
-    xclip=xclip.filled(medclip)
+# necessary if nan values
+#    x=x.filled(medclip)
+#    xclip=xclip.filled(medclip)
+#    xclip[np.isnan(xclip)]=medclip
+#    x[np.isnan(x)]=medclip
     qlclip = np.percentile(xclip, 25)
     stdclip = 2.*(medclip - qlclip)/1.349    
     oldmedclip=1.
