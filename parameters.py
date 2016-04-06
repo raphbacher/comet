@@ -61,7 +61,7 @@ class ParamsPreProcess():
                  lmbdaMin=0,
                  lmbdaMax=None,
                  forceProcess=False,
-                 unmask=False
+                 unmask=True
                  ):
         self.allCube=allCube
         self.methodRC=methodRC
@@ -73,6 +73,7 @@ class ParamsPreProcess():
         self.lmbdaMin=lmbdaMin
         self.lmbdaMax=lmbdaMax
         self.forceProcess=forceProcess
+        self.unmask=unmask
         
     
 class ParamsDetection():
@@ -107,8 +108,8 @@ class ParamsPostProcess():
     def __init__(self,
                  threshold=0.1,
                  FDR=True,
-                 qvalue=False,
-                 newSource=False,
+                 qvalue=True,
+                 newSource=True,
                  resizeCube=True,
                  ):
         self.FDR=FDR

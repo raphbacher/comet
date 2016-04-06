@@ -50,7 +50,7 @@ class Detection:
             Im2=src.cubes['PROCESS_CUBE'][0,:,:].clone()
             Im2.data=np.argmax(self.listCorrArr[-1],axis=0)
             self.listIndexMap.append(Im2)
-            return self.listPvalMap,self.listIndexMap
+        return self.listPvalMap,self.listIndexMap
                 
     def getCorrMap(self,source):
         """

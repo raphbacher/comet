@@ -15,7 +15,7 @@ from mpdaf.obj import Image
 
 
 
-def fine_clipping(Image1, niter = 10, fact_value = 0.9, Pmin = 0, Pmax = -1, Qmin = 0, Qmax = -1):
+def fine_clipping(Image1, niter = 3, fact_value = 0.9, Pmin = 0, Pmax = -1, Qmin = 0, Qmax = -1):
     P1,Q1 = Image1.shape
     if Qmax == -1:
         Qmax = Q1
@@ -29,14 +29,18 @@ def fine_clipping(Image1, niter = 10, fact_value = 0.9, Pmin = 0, Pmax = -1, Qmi
     med = np.median(Image.data)
     sigestQuant = IQR/1.349
     x = np.reshape(Image.data, P*Q)
+    
     xclip = x
     
     facttrunc = norm.ppf(fact_value)
     correction = norm.ppf((0.75*( 2*norm.cdf(facttrunc)-1 ) + (1 - norm.cdf(facttrunc)) )) - norm.ppf(0.25*( 2*norm.cdf(facttrunc)-1 ) + (1 - norm.cdf(facttrunc)) )
-    medclip = np.median(xclip)
+    medclip = np.nanmedian(xclip)
+    x=x.filled(medclip)
+    xclip=xclip.filled(medclip)
     qlclip = np.percentile(xclip, 25)
-    stdclip = 2.*(medclip - qlclip)/1.349
-        
+    stdclip = 2.*(medclip - qlclip)/1.349    
+    oldmedclip=1.
+    
     for i in xrange(niter):
         try:
             xclip = x[ np.where( ((x-medclip) < facttrunc*stdclip) &  ( (x-medclip) > -facttrunc*stdclip )  ) ] # on garde la symetrie dans la troncature
@@ -45,7 +49,7 @@ def fine_clipping(Image1, niter = 10, fact_value = 0.9, Pmin = 0, Pmax = -1, Qmi
             stdclip = 2*(medclip - qlclip)/correction
 
         except:
-            #print "error normalizing"
+            print "error normalizing"
             return Image1
                 
     xclip2 = x[np.where( ((x-medclip) <0) & ((x-medclip) > -3*stdclip)) ]
@@ -57,7 +61,7 @@ def fine_clipping(Image1, niter = 10, fact_value = 0.9, Pmin = 0, Pmax = -1, Qmi
     return Image1
 
 
-def recenter(Image1, niter = 10, lmbda=1., fact_value = 0.8, Pmin = 0, Pmax = -1, Qmin = 0, Qmax = -1):
+def recenter(Image1, niter = 3, lmbda=1., fact_value = 0.8, Pmin = 0, Pmax = -1, Qmin = 0, Qmax = -1):
     P1,Q1 = Image1.shape
     if Qmax == -1:
         Qmax = Q1

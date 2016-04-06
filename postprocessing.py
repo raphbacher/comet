@@ -7,6 +7,7 @@ Created on Wed Dec  2 16:58:41 2015
 
 import numpy as np
 from mpdaf.sdetect.source import Source
+import qvalues
 
 class Postprocess():
     
@@ -34,9 +35,9 @@ class Postprocess():
             
             
             if self.paramsPostProcess.newSource==True:
-                newSrc=Source(src.ID,src.ra,src.dec,self.params.origin)
-                newSrc.add_cube(src.cubes['MUSE_CUBE'],'MUSE_CUBE')
-                newSrc.add_cube(src.cubes['PROCESS_CUBE'],'PROCESS_CUBE')
+                newSrc=Source.from_data(src.ID,src.ra,src.dec,self.params.origin+[src.cubes['MUSE_CUBE'].filename])
+                newSrc.cubes['MUSE_CUBE']=src.cubes['MUSE_CUBE']
+                newSrc.cubes['PROCESS_CUBE']= src.cubes['PROCESS_CUBE']
                 self.listResultSources.append(newSrc)                
             else:
                 newSrc=src
@@ -51,6 +52,8 @@ class Postprocess():
             galSpec=self.createGalSpec(maskGal,src)
             
             newSrc.images['DET_STAT']=self.listPvalMap[i]
+            if self.paramsPostProcess.qvalue==True:
+                newSrc.images['DET_QSTAT']=self.createQvalMap(self.listPvalMap[i])
             newSrc.images['DET_INDEX_ALL']=self.listIndexMap[i]
             newSrc.images['DET_BIN_GAL']= maskGal
             newSrc.images['DET_BIN_HAL'] = maskHal
@@ -60,7 +63,6 @@ class Postprocess():
             newSrc.spectra['SPEC_GAL'] = galSpec
             #newSrc.origin=tuple(self.params.origin+[newSrc.cubes['MUSE_CUBE'].filename])
             
-
     
     
     def corrPvalueBH(self,im):
@@ -86,7 +88,11 @@ class Postprocess():
         else:
             Im1.data=Im.data<self.paramsPostProcess.threshold
         return Im1            
-        
+    
+    def createQvalMap(self,Im):
+        Im1=Im.copy()
+        Im1.data=qvalues.estimate(Im.data)
+        return Im1        
         
     def createBinMapGal(self,mask,src):
         """

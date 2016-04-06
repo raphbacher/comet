@@ -38,6 +38,8 @@ class Preprocessing():
                     max(center[1]-self.params.SW,0):min(center[1]+self.params.SW+1,src.cubes['MUSE_CUBE'].shape[2])]
             else:
                 data=src.cubes['MUSE_CUBE']
+            if self.paramsPreProcess.unmask==True:
+                data.data[:]=data.data.filled(np.median(data.data))
             if self.params.sim == False :
                 lmbda=int(data.wave.pixel(src.lines['LBDA_OBS'][src.lines['LINE']=='LYA'][0]))
             else:
@@ -94,7 +96,7 @@ class Preprocessing():
     def matchedFilterFSF(self,cubeContinuRemoved,fsf,):
         
         cubeContinuRemoved.data = cubeContinuRemoved.data/np.sqrt(cubeContinuRemoved.var)
-        
+
         f = function_Image.fine_clipping
         cubeMF = cubeContinuRemoved.loop_ima_multiprocessing(f, cpu = 6, verbose = False, \
             Pmin=self.paramsPreProcess.Pmin, Pmax=self.paramsPreProcess.Pmax, Qmin=self.paramsPreProcess.Qmin, Qmax=self.paramsPreProcess.Qmax) #

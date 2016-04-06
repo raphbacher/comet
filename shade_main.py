@@ -121,7 +121,8 @@ class SHADE():
             self.postprocessing=postp.Postprocess(cube,self.listSources,self.listPvalMap,self.listIndexMap,params=self.params,paramsPreProcess=self.paramsPreProcess,paramsDetection=self.paramsDetection,paramsPostProcess=self.paramsPostProcess,)
         
         self.postprocessing.createResultSources()
-        
+        if self.paramsPostProcess.newSource==True:
+            self.listResultSources=self.postprocessing.listResultSources
         
 
     
