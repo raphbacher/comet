@@ -49,6 +49,7 @@ class ParamsPreProcess():
     Param: int lmbdaMin and lmbdaMax, trim some wavelength if allCube processing.
     Param: bool forceProcess, force a new preprocessing of sources even if sources have already a "PROCESS_CUBE"
     Param: unmask=True, unmask masked array with median filled values to speed up calculations. MUST BE SET TO TRUE FOR NOW (unsolved bugs due to nan values)
+    Param: shiftLamdaDetectin=0, to test false detection in a spectrally shifted (empty) area
     """
     def __init__(self,
                  allCube=False,
@@ -61,7 +62,8 @@ class ParamsPreProcess():
                  lmbdaMin=0,
                  lmbdaMax=None,
                  forceProcess=False,
-                 unmask=True
+                 unmask=True,
+                 shiftLamdaDetectin=0
                  ):
         self.allCube=allCube
         self.methodRC=methodRC
@@ -74,6 +76,7 @@ class ParamsPreProcess():
         self.lmbdaMax=lmbdaMax
         self.forceProcess=forceProcess
         self.unmask=unmask
+        self.shiftLamdaDetection=shiftLamdaDetection
         
     
 class ParamsDetection():
@@ -83,6 +86,7 @@ class ParamsDetection():
     Param: string *centering*, center (with 'all') or not (with 'none') the spectra to be tested or 
     only the reference spectra (with 'ref')
     Param: bool *norm*, normalize spectra or not in the correlation test.
+    Param: list *listRef*, proposed dictionnary of spectra (None by default as it is learned on data )
     """
 
 
@@ -90,10 +94,12 @@ class ParamsDetection():
                  windowRef=1,
                  centering='none',
                  norm=True,
+                 listRef=None
                  ):
         self.windowRef=windowRef
         self.centering=centering
         self.norm=norm
+        self.listRef=listRef
 
 
 

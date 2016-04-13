@@ -24,6 +24,7 @@ class Detection:
         self.listIndexMap=[]
         
         
+        
     def detect(self):
         """
         Compute the detection test. At this point sources must contain a PROCESS_CUBE 
@@ -81,10 +82,12 @@ class Detection:
                 zoneCentr[i,:,:]=zoneCentr[i,:,:]-meanIm
         
         #Compute the target spectrum by averaging pixels around the center of the galaxy, then create a list of shifted versions.
-        listRef=[(np.mean(np.mean( \
-            zoneLarge[:,refPos[0]-self.paramsDetection.windowRef:refPos[0]+self.paramsDetection.windowRef+1, \
-            refPos[1]-self.paramsDetection.windowRef:refPos[1]+self.paramsDetection.windowRef+1],axis=2),axis=1))[k+1:zoneCentr.shape[0]+k+1] for k in xrange(zoneLarge.shape[0]-zoneCentr.shape[0]-1)]
-        
+        if self.paramsDetection.listRef is None:        
+            listRef=[(np.mean(np.mean( \
+                zoneLarge[:,refPos[0]-self.paramsDetection.windowRef:refPos[0]+self.paramsDetection.windowRef+1, \
+                refPos[1]-self.paramsDetection.windowRef:refPos[1]+self.paramsDetection.windowRef+1],axis=2),axis=1))[k+1:zoneCentr.shape[0]+k+1] for k in xrange(zoneLarge.shape[0]-zoneCentr.shape[0]-1)]
+        else:
+            listRef=self.paramsDetection.listRef
         if (self.paramsDetection.centering=='ref') or (self.paramsDetection.centering=='all'):
             for l,ref in enumerate(listRef):
                 listRef[l]=ref-np.mean(ref)
@@ -98,7 +101,8 @@ class Detection:
         #normalize target spectra (always)
         for l,ref in enumerate(listRef):
             listRef[l]=ref/np.sqrt(np.sum(ref**2))        
-
+        
+        self.listRef=listRef
         #Compute dot product between data and the list of referenced spectra
         res=np.zeros((len(listRef),zoneNorm.shape[1],zoneNorm.shape[2]))        
         for k in xrange(len(listRef)):
