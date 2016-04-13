@@ -6,6 +6,10 @@ Created on Fri Dec 11 03:29:26 2015
 """
 
 import cPickle as pickle
+import os
+
+DEFAULT_FSF = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                           'fsf_HDFS_v1-24.pk')
 
 class Params():
     
@@ -16,7 +20,7 @@ class Params():
                  sim=False,
                  lmbdaShift=7,
                  version='V1.0',
-                 fsf='/home/floriane/code/shade/fsf_HDFS_v1-24.pk',
+                 fsf=DEFAULT_FSF,
                  ):
         """
         Param: int *LW*, Lambda Window where the correlation test will occur (that must cover the half-width of the line emission)

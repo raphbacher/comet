@@ -5,5 +5,9 @@ setup(
     version='0.1',
     packages=find_packages(),
     zip_safe=False,
+    package_data={
+        'shade': ['shade/*.pk'],
+    },
+    include_package_data=True,
     #install_requires=['Pillow'],
 )
