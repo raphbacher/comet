@@ -16,7 +16,7 @@ class Params():
                  sim=False,
                  lmbdaShift=7,
                  version='V1.0',
-                 fsf='/home/raphael/Travail/These/Depot/Code/these/code/lib/shade/fsf_HDFS_v1-24.pk',
+                 fsf='/home/floriane/code/shade/fsf_HDFS_v1-24.pk',
                  ):
         """
         Param: int *LW*, Lambda Window where the correlation test will occur (that must cover the half-width of the line emission)

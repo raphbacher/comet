@@ -57,7 +57,7 @@ class Postprocess():
             newSrc.images['DET_INDEX_ALL']=self.listIndexMap[i]
             newSrc.images['DET_BIN_GAL']= maskGal
             newSrc.images['DET_BIN_HAL'] = maskHal
-            
+            maskAll.data = maskAll.data.astype(np.int)
             newSrc.images['DET_BIN_ALL'] =maskAll
             newSrc.spectra['SPEC_HAL'] = halSpec
             newSrc.spectra['SPEC_GAL'] = galSpec
