@@ -41,7 +41,7 @@ class Preprocessing():
             if self.paramsPreProcess.unmask==True:
                 data.data[:]=data.data.filled(np.nanmedian(data.data))
             if self.params.sim == False :
-                lmbda=int(data.wave.pixel(src.lines['LBDA_OBS'][src.lines['LINE']=='LYA'][0]))+shiftLamdaDetection
+                lmbda=int(data.wave.pixel(src.lines['LBDA_OBS'][src.lines['LINE']=='LYA'][0]))+self.paramsPreProcess.shiftLambdaDetection
             else:
                 lmbda=data.shape[0]/2
             

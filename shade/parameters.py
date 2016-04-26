@@ -67,7 +67,7 @@ class ParamsPreProcess():
                  lmbdaMax=None,
                  forceProcess=False,
                  unmask=True,
-                 shiftLamdaDetectin=0
+                 shiftLambdaDetection=0
                  ):
         self.allCube=allCube
         self.methodRC=methodRC
@@ -80,7 +80,7 @@ class ParamsPreProcess():
         self.lmbdaMax=lmbdaMax
         self.forceProcess=forceProcess
         self.unmask=unmask
-        self.shiftLamdaDetection=shiftLamdaDetection
+        self.shiftLambdaDetection=shiftLambdaDetection
         
     
 class ParamsDetection():
