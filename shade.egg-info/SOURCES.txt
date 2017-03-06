@@ -1,4 +1,5 @@
 README
+setup.py
 shade/__init__.py
 shade/array_tools.py
 shade/detection.py

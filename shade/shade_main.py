@@ -131,12 +131,14 @@ class SHADE():
         """
         Build source object from ID and catalog. By default, MUSE_CUBE in each source are not resized.
         """
-#        ra=self.catalog[1].data[ID][2]
-#        dec=self.catalog[1].data[ID][3]
-#        z=self.catalog[1].data[ID][4]
-        ra=self.catalog[self.catalog['ID']==ID]['RA'][0]
-        dec=self.catalog[self.catalog['ID']==ID]['DEC'][0]
-        z=self.catalog[self.catalog['ID']==ID]['Z_MUSE'][0]
+        try:
+            ra=self.catalog[self.catalog['ID']==ID]['RA'][0]
+            dec=self.catalog[self.catalog['ID']==ID]['DEC'][0]
+            z=self.catalog[self.catalog['ID']==ID]['Z_MUSE'][0]
+        except:
+            ra=self.catalog[self.catalog['ID']==ID]['Ra'][0]
+            dec=self.catalog[self.catalog['ID']==ID]['Dec'][0]
+            z=self.catalog[self.catalog['ID']==ID]['Z'][0]
 
         cubeData=self.cube
         src=Source.from_data(ID, ra, dec, origin=['SHADE Intern Format','1.0',self.cube.filename,'1.0'],cubes={'MUSE_CUBE':cubeData})
