@@ -31,6 +31,7 @@ class Detection:
         of shape [LW-lmbda:LW+lmbda,center[0]-SW:center[0]+SW,center[1]-SW:center[1]+SW]
         or just [LW-lmbda:LW+lmbda,:,:] if SW is None.
         """
+        self.listDicRef=[]
         for i,src in enumerate(self.listSources):
             try:
                 src.cubes['PROCESS_CUBE']
@@ -40,8 +41,10 @@ class Detection:
             
             #Compute the 3D array of correlations between the spaxel map and a list of shifted target spectra
             #Dims of an element of listCorrMap : Number of target spectra x Spatial x Spatial
-            self.listCorrArr.append(self.getCorrMap(src))
-            
+            if self.paramsDetection.listDicRef is not None:            
+                self.listCorrArr.append(self.getCorrMap(src,self.paramsDetection.listDicRef[i]))
+            else:
+                self.listCorrArr.append(self.getCorrMap(src))
             #Then compute the 2D map of pvalues corresponding to the test of the maximal 
             #correlation between each spaxel and the list of target spectra
             #The maps are saved as mpdaf Images.
@@ -53,12 +56,14 @@ class Detection:
             self.listIndexMap.append(Im2)
         return self.listPvalMap,self.listIndexMap
                 
-    def getCorrMap(self,source):
+    def getCorrMap(self,source,listRef=None):
         """
         Get the correlation map between pixels of the cube of a source object and 
         a list of target spectra.
         """
         zone=source.cubes['PROCESS_CUBE'].data
+        if self.paramsPreProcess.unmask==True:
+            zone=zone.data #access data without mask
         lmbda=zone.shape[0]/2
         if self.params.sim == False:
             refPos=source.cubes['PROCESS_CUBE'].wcs.sky2pix([source.dec,source.ra])[0].astype(int)
@@ -82,12 +87,11 @@ class Detection:
                 zoneCentr[i,:,:]=zoneCentr[i,:,:]-meanIm
         
         #Compute the target spectrum by averaging pixels around the center of the galaxy, then create a list of shifted versions.
-        if self.paramsDetection.listRef is None:        
+        if listRef is None:        
             listRef=[(np.mean(np.mean( \
                 zoneLarge[:,refPos[0]-self.paramsDetection.windowRef:refPos[0]+self.paramsDetection.windowRef+1, \
                 refPos[1]-self.paramsDetection.windowRef:refPos[1]+self.paramsDetection.windowRef+1],axis=2),axis=1))[k+1:zoneCentr.shape[0]+k+1] for k in xrange(zoneLarge.shape[0]-zoneCentr.shape[0]-1)]
-        else:
-            listRef=self.paramsDetection.listRef
+        
         if (self.paramsDetection.centering=='ref') or (self.paramsDetection.centering=='all'):
             for l,ref in enumerate(listRef):
                 listRef[l]=ref-np.mean(ref)
@@ -102,7 +106,7 @@ class Detection:
         for l,ref in enumerate(listRef):
             listRef[l]=ref/np.sqrt(np.sum(ref**2))        
         
-        self.listRef=listRef
+        self.listDicRef.append(listRef)
         #Compute dot product between data and the list of referenced spectra
         res=np.zeros((len(listRef),zoneNorm.shape[1],zoneNorm.shape[2]))        
         for k in xrange(len(listRef)):

@@ -25,7 +25,7 @@ class Preprocessing():
     def processSrc(self,):
         for i,src in enumerate(self.listSources): 
             if self.paramsPreProcess.forceProcess == False:
-                if 'PROCESS_CUBE' in src.cubes.keys:                                
+                if 'PROCESS_CUBE' in src.cubes.keys():                                
                     continue
             
             if self.params.SW is not None:
@@ -56,7 +56,7 @@ class Preprocessing():
             
             dataMF=self.matchedFilterFSF(dataRC,fsf)
             src.cubes['PROCESS_CUBE']=dataMF
-
+            
     def processSrcWithCube(self):
         self.processCube()
         for src in self.listSources():
@@ -96,17 +96,21 @@ class Preprocessing():
     def matchedFilterFSF(self,cubeContinuRemoved,fsf,):
         
         cubeContinuRemoved.data = cubeContinuRemoved.data/np.sqrt(cubeContinuRemoved.var)
-
-        f = function_Image.fine_clipping
-        cubeMF = cubeContinuRemoved.loop_ima_multiprocessing(f, cpu = 6, verbose = False, \
-            Pmin=self.paramsPreProcess.Pmin, Pmax=self.paramsPreProcess.Pmax, Qmin=self.paramsPreProcess.Qmin, Qmax=self.paramsPreProcess.Qmax) #
-        
+        f = function_Image.fine_clipping2
+        #cubeMF = cubeContinuRemoved.loop_ima_multiprocessing(f, cpu = 6, verbose = False, \
+        #    Pmin=self.paramsPreProcess.Pmin, Pmax=self.paramsPreProcess.Pmax, Qmin=self.paramsPreProcess.Qmin, Qmax=self.paramsPreProcess.Qmax) #
+        cubeMF=cubeContinuRemoved
+        if self.paramsPreProcess.spatialCentering==True:        
+            for i in xrange(cubeMF.shape[0]):
+                cubeMF[i,:,:]=f(cubeMF[i,:,:],Pmin=self.paramsPreProcess.Pmin, Pmax=self.paramsPreProcess.Pmax, Qmin=self.paramsPreProcess.Qmin, Qmax=self.paramsPreProcess.Qmax,unmask=self.paramsPreProcess.unmask)
+        #cubeMF = cubeContinuRemoved
         # ---- Matched Filter (MF) ---- #
-        for i in xrange(cubeMF.shape[0]):
-            cubeMF[i,:,:]=function_Image.Image_conv(cubeMF[i,:,:],fsf[i])
+        if self.paramsPreProcess.FSFConvol==True:
+            for i in xrange(cubeMF.shape[0]):
+                cubeMF[i,:,:]=function_Image.Image_conv(cubeMF[i,:,:],fsf[i],self.paramsPreProcess.unmask)
         
-        cubeMF=cubeMF.loop_ima_multiprocessing(f, cpu = 6, verbose = False,Pmin=self.paramsPreProcess.Pmin, Pmax=self.paramsPreProcess.Pmax, \
-        Qmin=self.paramsPreProcess.Qmin, Qmax=self.paramsPreProcess.Qmax)
+        #cubeMF=cubeMF.loop_ima_multiprocessing(f, cpu = 6, verbose = False,Pmin=self.paramsPreProcess.Pmin, Pmax=self.paramsPreProcess.Pmax, \
+        #Qmin=self.paramsPreProcess.Qmin, Qmax=self.paramsPreProcess.Qmax)
         
         return cubeMF
     

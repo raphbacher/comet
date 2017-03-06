@@ -15,21 +15,23 @@ from mpdaf.obj import Image
 
 
 
-def fine_clipping(Image1, niter = 3, fact_value = 0.9, Pmin = 0, Pmax = -1, Qmin = 0, Qmax = -1):
-    P1,Q1 = Image1.shape
-    if Qmax == -1:
-        Qmax = Q1
-    if Pmax == -1:
-        Pmax = P1
-    Image = Image1[Pmin:Pmax, Qmin:Qmax].copy()
+def fine_clipping(Image, niter = 20, fact_value = 0.9, Pmin = 0, Pmax = -1, Qmin = 0, Qmax = -1,unmask=True):
     P,Q = Image.shape
-    Quartile1 = np.percentile(Image.data, 25)
-    Quartile3 = np.percentile(Image.data, 75)
+    if Qmax == -1:
+        Qmax = Q
+    if Pmax == -1:
+        Pmax = P
+    Image1 = Image[Pmin:Pmax, Qmin:Qmax].copy()
+    P1,Q1 = Image1.shape
+    Quartile1 = np.percentile(Image1.data, 25)
+    Quartile3 = np.percentile(Image1.data, 75)
     IQR= Quartile3 - Quartile1
-    med = np.median(Image.data)
+    med = np.median(Image1.data)
     sigestQuant = IQR/1.349
-    x = np.reshape(Image.data, P*Q)
-    
+    if unmask==True:
+        x = np.reshape(Image1.data.data, P1*Q1)
+    else:
+        x = np.reshape(Image1.data, P1*Q1)    
     xclip = x
     
     facttrunc = norm.ppf(fact_value)
@@ -63,6 +65,86 @@ def fine_clipping(Image1, niter = 3, fact_value = 0.9, Pmin = 0, Pmax = -1, Qmin
     Image1.data = (Image1.data- medclip)/stdclip2
     return Image1
 
+
+def fine_clipping2(Image, niter = 20, fact_value = 0.9,Pmin = 0, Pmax = -1, Qmin = 0, Qmax = -1,unmask=True):
+    P,Q = Image.shape
+    if Qmax == -1:
+        Qmax = Q
+    if Pmax == -1:
+        Pmax = P
+    Image1 = Image[Pmin:Pmax, Qmin:Qmax].copy()
+    P1,Q1 = Image1.shape
+    if unmask==True:
+        x = np.reshape(Image1.data.data, P1*Q1)
+    else:
+        x = np.reshape(Image1.data, P1*Q1)
+    x_sorted=np.sort(x)
+    Quartile1 = percent(x_sorted, 25)
+    Quartile3 = percent(x_sorted, 75)
+    IQR= Quartile3 - Quartile1
+    med = middle(x_sorted)
+    fact_IQR=norm.ppf(0.75)-norm.ppf(0.25)
+    sigestQuant = IQR/fact_IQR
+    
+    xclip = x_sorted
+    
+    facttrunc = norm.ppf(fact_value)
+    cdf_facttrunc=norm.cdf(facttrunc)
+    correction = norm.ppf((0.75*( 2*cdf_facttrunc-1 ) + (1 - cdf_facttrunc) )) - norm.ppf(0.25*( 2*cdf_facttrunc-1 ) + (1 - cdf_facttrunc) )
+    medclip = middle(xclip)
+    qlclip = percent(xclip, 25)
+    stdclip = 2.*(medclip - qlclip)/fact_IQR    
+    oldmedclip=1.
+    oldstdclip=1.
+
+    i=0
+    while (oldmedclip != medclip) and (i < niter):
+        lim=np.searchsorted(x_sorted,[medclip-facttrunc*stdclip,medclip+facttrunc*stdclip])
+        xclip = x_sorted[lim[0]:lim[1]]
+        oldoldmedclip=oldmedclip
+        oldmedclip = medclip
+        oldoldstdclip=oldstdclip
+        oldstdclip=stdclip
+        medclip = middle(xclip)
+        qlclip = percent(xclip, 25)
+        stdclip = 2*np.abs(medclip - qlclip)/correction
+        
+        if oldoldmedclip ==medclip:#gestion des cycles
+            if stdclip>oldstdclip:
+                break
+            else:
+                stdclip=oldstdclip
+                medclip=oldmedclip
+        i+=1
+
+        
+    xclip2 = x_sorted[np.where( ((x_sorted-medclip) <0) & ((x_sorted-medclip) > -3*stdclip)) ]
+    correctionTrunc= np.sqrt( 1. +(-3.*2.* norm.pdf(3.)) / (2.*norm.cdf(3.) -1.) )
+    stdclip2 = np.sqrt( np.mean( (xclip2-medclip)**2)) / correctionTrunc
+    
+    Image1.data = (Image1.data- medclip)/stdclip2
+    
+    return Image1
+
+def middle(L):
+    #L = np.sort(L)
+    n = len(L)
+    m = n - 1
+    return (L[n/2] + L[m/2]) / 2.0
+
+def percent(L,q):
+    """L np.array, q betwwen 0-100"""
+    n0=q/100. * len(L)
+    n = int(np.floor(n0))
+    if n>=len(L):
+        return L[-1]
+    if n >= 1:
+        if n==n0:
+            return L[n-1]
+        else:
+            return (L[n-1]+L[n])/2.0
+    else:
+        return L[0]
 
 def recenter(Image1, niter = 3, lmbda=1., fact_value = 0.8, Pmin = 0, Pmax = -1, Qmin = 0, Qmax = -1):
     P1,Q1 = Image1.shape
@@ -235,18 +317,23 @@ def getStudentParamMul(cube):
         pool.join()
     return res
     
-def Image_conv( im, tab):
+def Image_conv( im, tab,unmask=True):
     """ Defines the convolution between an Image object and an array. Designed to be used with the multiprocessing function 'FSF_convolution_multiprocessing'
         
         :param im: Image object 
         :type im: class 'mpdaf.obj.Image'
         :param tab: array containing the convolution kernel
         :type tab: array
+        :param unmask: if True use .data of masked array (faster computation)   
+        :type unmask: bool 
         :return: array
         :rtype: array
         
     """
-    res = ssl.convolve(im.data, tab, 'full')
+    if unmask==True:
+        res = ssl.fftconvolve(im.data.data, tab, 'full')
+    else:
+        res = ssl.fftconvolve(im.data, tab, 'full')
     a,b = tab.shape
     im_tmp = Image(data = res[int(a-1)/2:im.data.shape[0] + (a-1)/2 ,(b-1)/2:im.data.shape[1]+(b-1)/2 ])
     return im_tmp.data
