@@ -79,8 +79,8 @@ class Detection:
             refPos=[zone.shape[1]/2,zone.shape[2]/2]
 
         zoneLarge=zone[max(lmbda-self.params.LW-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.params.lmbdaShift+1,zone.shape[0]),:,:]
-        zoneCentr=zone[max(lmbda-self.params.LW+1,0):min(lmbda+self.params.LW,zone.shape[0]),:,:] #it is necessary to center between -LW+1 and LW (so a width of 2LW-1 instead of classical 2LW+1) to allow a shift of -lmbdashift:lmbdashift+1
-
+        zoneCentr=zone[max(lmbda-self.params.LW,0):min(lmbda+self.params.LW+1,zone.shape[0]),:,:] 
+        
         #centering (or not)
         if self.paramsDetection.centering=='all':
             meanIm=np.mean(zoneCentr,axis=0)
@@ -89,11 +89,10 @@ class Detection:
 
         #Compute the target spectrum by averaging pixels around the center of the galaxy, then create a list of shifted versions.
         if listRef is None:
-            start=(zoneLarge.shape[0]-zoneCentr.shape[0]-1)/2
+            start=(zoneLarge.shape[0]-zoneCentr.shape[0]-self.params.lmbdaShift)/2
             listRef=[(np.mean(np.mean( \
                 zoneLarge[:,refPos[0]-self.paramsDetection.windowRef:refPos[0]+self.paramsDetection.windowRef+1, \
                 refPos[1]-self.paramsDetection.windowRef:refPos[1]+self.paramsDetection.windowRef+1],axis=2),axis=1))[start+k:start+zoneCentr.shape[0]+k] for k in xrange(2*self.params.lmbdaShift+1)]
-
 
         if (self.paramsDetection.centering=='ref') or (self.paramsDetection.centering=='all'):
             for l,ref in enumerate(listRef):
