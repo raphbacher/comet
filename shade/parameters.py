@@ -7,20 +7,27 @@ Created on Fri Dec 11 03:29:26 2015
 
 import cPickle as pickle
 import os
+import numpy as np
 
-DEFAULT_FSF = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+fsf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            'fsf_HDFS_v1-24.pk')
+DEFAULT_FSF = pickle.load(open(fsf_file,'rb'))
+
+DEFAULT_KERNEL_MF = np.tile(np.array([[ 0.09109594,  0.11895933,  0.09109594],
+       [ 0.11895933,  0.15977892,  0.11895933],
+       [ 0.09109594,  0.11895933,  0.09109594]])[None,:,:],(3681,1,1))
 
 class Params():
-    
+
     def __init__(self,
-                 LW=20, 
+                 LW=20,
                  SW=None,
                  LBDA=3641,
                  sim=False,
                  lmbdaShift=7,
                  version='V1.0',
                  fsf=DEFAULT_FSF,
+                 kernel_mf=DEFAULT_KERNEL_MF,
                  ):
         """
         Param: int *LW*, Lambda Window where the correlation test will occur (that must cover the half-width of the line emission)
@@ -30,7 +37,8 @@ class Params():
         from the estimated source spectrum. A dictionary with 2*lmbdaShift+1 spectra will be built.
         Param: string *centering*, choose to center all spectra ('all') or 'none' or only the target spectra ('ref')
         Param: bool *norm*, choose to norm (correlation approach) or not (matched filter approach)
-        Param: string *fsf*, path to an fsf file (3D array)
+        Param: np array *fsf*, fsf over wavelength (3D array)
+        Param: np array *kernerl_mf*, kernel for matched filter
         """
 
         self.LW=LW
@@ -39,13 +47,14 @@ class Params():
         self.lmbdaShift=lmbdaShift
         self.version=version
         self.origin=['SHADE',version]
-        self.fsf=pickle.load(open(fsf,'rb'))[0:LBDA,:,:]
-        
+        self.fsf= fsf
+        self.kernel_mf=kernel_mf
+
 class ParamsPreProcess():
     """
     Param: bool *allCube*, wheither to process the whole cube at once then reform the sources
     or process each source datacube independently
-    Param: string methodRC, choice of the method for remove the continuum 
+    Param: string methodRC, choice of the method for remove the continuum
     (for now only median filter 'medfilt', lts is on his way)
     Param: int windowRC, window for median filter (in this case it is the whole window not the half-size)
     Param: int Pmin,Pmax,Qmin,Qmax, trim some borders of the datacube to avoid some problems, used only
@@ -87,12 +96,12 @@ class ParamsPreProcess():
         self.shiftLambdaDetection=shiftLambdaDetection
         self.spatialCentering=spatialCentering
         self.FSFConvol=FSFConvol
-    
+
 class ParamsDetection():
     """
     Param: int *windowRef*, spatial window (half-width) for computing the reference spectrum (by averaging)
     at the center of the galaxy.
-    Param: string *centering*, center (with 'all') or not (with 'none') the spectra to be tested or 
+    Param: string *centering*, center (with 'all') or not (with 'none') the spectra to be tested or
     only the reference spectra (with 'ref')
     Param: bool *norm*, normalize spectra or not in the correlation test.
     Param: list *listDicRef*, list of proposed dictionnary of spectra for each source (None by default as it is learned on data )

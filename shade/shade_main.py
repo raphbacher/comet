@@ -142,5 +142,5 @@ class SHADE():
 
         cubeData=self.cube
         src=Source.from_data(ID, ra, dec, origin=['SHADE Intern Format','1.0',self.cube.filename,'1.0'],cubes={'MUSE_CUBE':cubeData})
-        src.add_line(['LBDA_OBS','LINE'],[(z+1)*1215.668,"LYA"])
+        src.add_line(['LBDA_OBS','LINE'],[(z+1)*1215.668,"LYALPHA"])
         return src
