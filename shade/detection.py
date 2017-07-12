@@ -89,11 +89,14 @@ class Detection:
 
         #Compute the target spectrum by averaging pixels around the center of the galaxy, then create a list of shifted versions.
         if listRef is None:
-            start=np.maximum((zoneLarge.shape[0]-zoneCentr.shape[0]-self.params.lmbdaShift)/2-1,0)
+            #start=np.maximum((zoneLarge.shape[0]-zoneCentr.shape[0]-2*self.params.lmbdaShift),0)
+            start=np.maximum((zoneLarge.shape[0]-zoneCentr.shape[0])/2-self.params.lmbdaShift,0)
+            #print zoneLarge.shape[0],zoneCentr.shape[0],self.params.lmbdaShift
+
             listRef=[(np.mean(np.mean( \
                 zoneLarge[:,refPos[0]-self.paramsDetection.windowRef:refPos[0]+self.paramsDetection.windowRef+1, \
                 refPos[1]-self.paramsDetection.windowRef:refPos[1]+self.paramsDetection.windowRef+1],axis=2),axis=1))[start+k:start+zoneCentr.shape[0]+k] for k in xrange(2*self.params.lmbdaShift+1)]
-
+        #print [(start+k,start+zoneCentr.shape[0]+k) for k in xrange(2*self.params.lmbdaShift+1)]
 
         if (self.paramsDetection.centering=='ref') or (self.paramsDetection.centering=='all'):
             for l,ref in enumerate(listRef):
