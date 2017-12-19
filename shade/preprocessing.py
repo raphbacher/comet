@@ -15,10 +15,10 @@ class Preprocessing():
 
     """
 
-    def __init__(self,cube,listSources,processedCube,params,paramsPreProcess):
+    def __init__(self,cube,listSources,cubeProcessed,params,paramsPreProcess):
         self.cube=cube
         self.listSources=listSources
-        self.processedCube=processedCube
+        self.cubeProcessed=cubeProcessed
         self.params=params
         self.paramsPreProcess=paramsPreProcess
 
@@ -59,32 +59,26 @@ class Preprocessing():
 
     def processSrcWithCube(self):
         self.processCube()
-        for src in self.listSources():
-            try:
-                src.cubes['PROCESS_CUBE']
-                continue
-            except:
-                center=self.cubeProcessed.wcs.sky2pix([source.dec,source.ra])[0]
+        for src in self.listSources:
+            if 'PROCESS_CUBE' not in src.cubes.keys():
+                center=self.cubeProcessed.wcs.sky2pix([src.dec,src.ra])[0].astype(int)
                 lmbda=self.cubeProcessed.wave.pixel(src.lines['LBDA_OBS'][src.lines['LINE']=='LYALPHA'][0])
-                processedData=self.cubeProcessed[max(lmbda-self.params.LW-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.params.lmbdaShift+1,dataRC.shape[0]), \
-                    max(center[0]-self.params.SW,0):min(center[0]+self.params.SW+1,self.cubeProcessed.shape[1]), \
-                    max(center[1]-self.params.SW,0):min(center[1]+self.params.SW+1,self.cubeProcessed.shape[2])]
+                processedData=self.cubeProcessed[int(max(lmbda-self.params.LW-self.params.lmbdaShift,0)):int(min(lmbda+self.params.LW+self.params.lmbdaShift+1,self.cubeProcessed.shape[0])), \
+                    int(max(center[0]-self.params.SW,0)):int(min(center[0]+self.params.SW+1,self.cubeProcessed.shape[1])), \
+                    int(max(center[1]-self.params.SW,0)):int(min(center[1]+self.params.SW+1,self.cubeProcessed.shape[2]))]
                 src.add_cube(processedData, 'PROCESS_CUBE')
 
-
     def processCube(self):
-        if self.processedCube is None:
+        if self.cubeProcessed is None:
             if self.paramsPreProcess.lmbdaMax is None:
-                self.paramsPreProcess.lmbdaMax=self.cube.shape[0]
-            if self.params.SW is not None:
-                data=self.cube[self.paramsPreProcess.lmbdaMin:self.paramsPreProcess.lmbdaMax, center[0]-self.params.SW:center[0]+self.params.SW+1,center[1]-self.params.SW:center[1]+self.params.SW+1]
-            else:
-                data=self.cube[self.paramsPreProcess.lmbdaMin:self.paramsPreProcess.lmbdaMax,:,:]
+                self.paramsPreProcess.lmbdaMax = self.cube.shape[0]
+
+            data=self.cube[self.paramsPreProcess.lmbdaMin:self.paramsPreProcess.lmbdaMax,:,:]
             kernel_mf=self.params.kernel_mf[self.paramsPreProcess.lmbdaMin:self.paramsPreProcess.lmbdaMax]
             dataRC=self.removeContinuum(data)
             dataMF=self.matchedFilterFSF(dataRC,kernel_mf)
-            self.cubeProcessed=dataMF
 
+            self.cubeProcessed=dataMF
 
 
     def removeContinuum(self,cube):

@@ -18,15 +18,15 @@ import detection
 class SHADE():
 
 
-    def __init__(self,cube=None, processedCube=None,catalog=None, listSources=None, listID = None,params=None):
+    def __init__(self,cube=None, cubeProcessed=None,catalog=None, listSources=None, listID = None,params=None):
         """
         Several Input choices are available:
         * List of MUSE Sources : These sources needs a MUSE_CUBE in their cubes extension.
         * Complete cube with a MUSE catalogue -> all Lyman-alpha emitters will be treated
         * Complete cube, catalogue and listID -> all the source of the ID list will be treated
-        An already preprocessed processedCube can also by passed along.
+        An already preprocessed cubeProcessed can also by passed along.
         Param: Cube object *cube*, MUSE datacube (optionnal if listSources is defined)
-        Param: Cube object *processedCube*, preprocessed datacube
+        Param: Cube object *cubeProcessed*, preprocessed datacube
         Param: String *catalog*, filename of a MUSE catalog
         Param: list of Sources object *listSources* (optionnal)
         Param: list of sources IDs *listID*, list of sources to extract from the cube using the catalog.
@@ -44,10 +44,10 @@ class SHADE():
             self.cube=None
         if catalog is not None:
             self.catalog=Catalog.read(catalog)
-        if processedCube is not None:
-            self.processedCube=processedCube
+        if cubeProcessed is not None:
+            self.cubeProcessed=cubeProcessed
         else:
-            self.processedCube=None
+            self.cubeProcessed=None
 
         if listSources is not None:
             self.listSources=listSources
@@ -84,13 +84,14 @@ class SHADE():
             self.paramsPreProcess=paramsPreProcess
 
         if self.preprocessing is None:
-            self.preprocessing=prep.Preprocessing(cube=self.cube,listSources=self.listSources,processedCube=self.processedCube,params=self.params,paramsPreProcess=self.paramsPreProcess)
+            self.preprocessing=prep.Preprocessing(cube=self.cube,listSources=self.listSources,cubeProcessed=self.cubeProcessed,params=self.params,paramsPreProcess=self.paramsPreProcess)
 
         #In some cases (lot of sources with some overlapping areas) it can be interesting to process all the cube
         #and then to extract processed data for the sources instead of processing several times the same data
 
         if self.paramsPreProcess.allCube == True:
             self.preprocessing.processSrcWithCube()
+            self.cubeProcessed = self.preprocessing.cubeProcessed
         else:
             self.preprocessing.processSrc()
 

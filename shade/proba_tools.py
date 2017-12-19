@@ -239,3 +239,95 @@ def getMask(listDetected, arr):
     for x in list(listDetected):
         mask[np.unravel_index(x, arr.shape)] = True
     return mask
+
+
+def connexAggrWhole(corrMap,core=None,returnNeighbors=False,w=1,coeff=1.2,seed=None):
+    corrArr = corrMap-np.array([function_Image.getParamNoise(corrMap[k])[0] for k in xrange(len(corrMap))])[:,None,None]
+    maxVal = np.max(corrArr, axis=0)
+    minVal = -np.min(corrArr, axis=0)
+    minValF = minVal.flatten()
+    maxValF = maxVal.flatten()
+
+    argsortPval = np.argsort(maxVal, axis=None)
+    argsortPval = argsortPval[::-1]
+
+    coreMask = np.zeros_like(maxVal, dtype=bool)
+
+    if core is not None:
+        if seed is not None:
+            for s in seed:
+                coreMask[s[0]-core:s[0]+core+1, s[1]-core:s[1]+core+1] = True
+        else:
+            coreMask[coreMask.shape[0]/2-core:coreMask.shape[0]/2+core+1,coreMask.shape[1]/2-core:coreMask.shape[1]/2+core+1]=True
+        coreMask = coreMask.flatten()
+
+        setAll = set([x for x in np.nonzero(coreMask)[0]])
+
+    else:
+        coreMask = coreMask.flatten()
+        setAll = set([argsortPval[0]])
+    listAll = list(setAll)
+    setNeighbors=set(getNeighbors(setAll,maxVal,w=w)).difference(setAll)
+    listNeighbors=np.array(list(setNeighbors))
+    if core is not None:
+        p=len(listAll)
+    else:
+        p = 1
+    n = 0
+
+    listPositif=[True]*len(listAll)
+    listQQ = [0]*len(listAll)
+    niter = 0
+    while len(listAll) !=len(minValF):
+
+        try:
+            k_=np.argmax(np.maximum(maxValF[listNeighbors],minValF[listNeighbors]))
+        except:
+            break
+        k = listNeighbors[k_]
+        setAll.update([k])
+        listAll.append(k)
+        setNeighbors = setNeighbors.union(getNeighbors(set([k]), maxVal, w))
+        setNeighbors = setNeighbors.difference(setAll)
+        listNeighbors = np.array(list(setNeighbors))
+
+        if maxValF[k] < minValF[k]:
+            n = n+1.
+            listPositif.append(False)
+        elif maxValF[k] > minValF[k]:
+            p = p+1.
+            listPositif.append(True)
+        qq = (1+n)/np.maximum(p, 1)
+        listQQ.append(qq)
+        niter=niter+1
+    listAll = np.array(listAll)
+
+    return maxVal,listAll,listQQ,listPositif
+
+def detectCometGlob(maxVal,listAll,listQQ,listPositif,q):
+    pos=np.nonzero(np.array(listQQ)<=q)[0]
+    if len(pos)>0:
+        k=pos[-1]
+        listSelected=listAll[:k]
+        listDetected = listSelected[listPositif[:k]]
+        mask = getMask(listDetected, maxVal)
+    else:
+        mask = np.empty_like(maxVal, dtype=bool)
+        mask[:] = False
+    return mask
+
+
+def corrPvalueBH(im,threshold):
+    """
+    Entrées:
+        im : l'ensemble des pvalues du test (array)
+        threshold: le seuil de FDR voulu
+    Sortie:
+        newThresold : le seuil à appliquer à l'ensemble des valeurs pour vérifier le FDR.
+    """
+    l=np.sort(im.flatten())
+    k=len(l)-1
+    while (l[k] > ((k+1)/float(len(l))*threshold)) and k>0:
+        k=k-1
+    thresholdFDR=l[k]
+    return thresholdFDR
