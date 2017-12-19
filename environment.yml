@@ -1,6 +1,7 @@
 channels:
   - conda-forge
   - defaults
+  - openastronomy
 dependencies:
   - matplotlib
   - mpdaf
