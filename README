@@ -6,4 +6,4 @@ Default parameters are stored in a class Params in parameters.py with specific p
 To install:
 python setup.py install
 
-.. image:: https://mybinder.org/badge.svg :target: https://mybinder.org/v2/gh/raphbacher/comet/master
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/raphbacher/comet/master)
