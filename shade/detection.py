@@ -5,6 +5,9 @@ Created on Wed Dec  2 16:59:18 2015
 @author: raphael
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from array_tools import normArr
 import proba_tools
@@ -15,13 +18,13 @@ class Detection:
 
 
     def __init__(self,listSources,params,paramsPreProcess,paramsDetection):
-        self.params=params
+        self.params = params
         self.paramsPreProcess=paramsPreProcess
         self.paramsDetection=paramsDetection
-        self.listSources=listSources
-        self.listPvalMap=[]
-        self.listCorrArr=[]
-        self.listIndexMap=[]
+        self.listSources = listSources
+        self.listPvalMap = []
+        self.listCorrArr = []
+        self.listIndexMap = []
 
 
 
@@ -36,7 +39,7 @@ class Detection:
             try:
                 src.cubes['PROCESS_CUBE']
             except:
-                print "Warning : No cube named 'PROCESS_CUBE' in source %s. MUSE_CUBE will be used"%src.ID
+                print("Warning : No cube named 'PROCESS_CUBE' in source %s. MUSE_CUBE will be used"%src.ID)
                 src.cubes['PROCESS_CUBE']=src.cubes['MUSE_CUBE']
 
             #Compute the 3D array of correlations between the spaxel map and a list of shifted target spectra
@@ -66,17 +69,17 @@ class Detection:
         zone=source.cubes['PROCESS_CUBE'].data
         if self.paramsPreProcess.unmask==True:
             zone=zone.data #access data without mask
-        lmbda=zone.shape[0]/2
+        lmbda=zone.shape[0]//2
         if self.params.sim == False:
             refPos=source.cubes['PROCESS_CUBE'].wcs.sky2pix([source.dec,source.ra])[0].astype(int)
         else:
             #for simulated sources sources are always supposed centered in the cube.
-            refPos=[zone.shape[1]/2,zone.shape[2]/2]
+            refPos=[zone.shape[1]//2,zone.shape[2]//2]
 
         if self.params.SW is not None: # Resize zone of study accordingly
             zone=zone[:,max(refPos[0]-self.params.SW,0):min(refPos[0]+self.params.SW+1, \
             zone.shape[1]),max(refPos[1]-self.params.SW,0):min(refPos[1]+self.params.SW+1,zone.shape[2])]
-            refPos=[zone.shape[1]/2,zone.shape[2]/2]
+            refPos=[zone.shape[1]//2,zone.shape[2]//2]
 
         zoneLarge=zone[max(lmbda-self.params.LW-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.params.lmbdaShift+1,zone.shape[0]),:,:]
         zoneCentr=zone[max(lmbda-self.params.LW,0):min(lmbda+self.params.LW+1,zone.shape[0]),:,:]
@@ -90,13 +93,11 @@ class Detection:
         #Compute the target spectrum by averaging pixels around the center of the galaxy, then create a list of shifted versions.
         if listRef is None:
             #start=np.maximum((zoneLarge.shape[0]-zoneCentr.shape[0]-2*self.params.lmbdaShift),0)
-            start=np.maximum((zoneLarge.shape[0]-zoneCentr.shape[0])/2-self.params.lmbdaShift,0)
-            #print zoneLarge.shape[0],zoneCentr.shape[0],self.params.lmbdaShift
+            start=np.maximum((zoneLarge.shape[0]-zoneCentr.shape[0])//2-self.params.lmbdaShift,0)
 
             listRef=[(np.mean(np.mean( \
                 zoneLarge[:,refPos[0]-self.paramsDetection.windowRef:refPos[0]+self.paramsDetection.windowRef+1, \
                 refPos[1]-self.paramsDetection.windowRef:refPos[1]+self.paramsDetection.windowRef+1],axis=2),axis=1))[start+k:start+zoneCentr.shape[0]+k] for k in xrange(2*self.params.lmbdaShift+1)]
-        #print [(start+k,start+zoneCentr.shape[0]+k) for k in xrange(2*self.params.lmbdaShift+1)]
 
         if (self.paramsDetection.centering=='ref') or (self.paramsDetection.centering=='all'):
             for l,ref in enumerate(listRef):

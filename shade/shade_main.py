@@ -4,6 +4,9 @@ Created on Fri Dec 11 03:54:02 2015
 
 @author: raphael
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 from mpdaf.sdetect.source import Source
 from mpdaf.sdetect import Catalog

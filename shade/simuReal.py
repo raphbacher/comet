@@ -19,7 +19,7 @@ import math
 try:
     import utils
 except:
-    print "Missing utils for creating filaments"
+    print("Missing utils for creating filaments")
 
 class SourceSim():
     """
@@ -40,14 +40,14 @@ class SourceSim():
         Param:
         """
 
-        self.shape=shape
-        self.lmbda=lmbda
-        self.data=np.zeros(shape)
-        self.listCenter=listCenter
-        self.center=listCenter[0]
-        self.listRadius=listRadius
-        self.intens=intens
-        self.link=link
+        self.shape = shape
+        self.lmbda = lmbda
+        self.data = np.zeros(shape)
+        self.listCenter = listCenter
+        self.center = listCenter[0]
+        self.listRadius = listRadius
+        self.intens = intens
+        self.link = link
         if randomShape==False:
             self.maskSources,self.label=buildMaskSources(self.listCenter,self.listRadius,shape,decrease)
         else:
@@ -194,7 +194,7 @@ class SourceSim():
 
 def buildHaloSpectra(lmbda,width,size):
     haloSpectra=np.zeros(size)
-    haloSpectra[lmbda-width/2.:lmbda+width/2.]=sst.norm.pdf(np.arange(-width/2.,width/2.),scale=2)
+    haloSpectra[lmbda-width//2:lmbda+width//2]=sst.norm.pdf(np.arange(-width//2,width//2),scale=2)
     haloSpectra=haloSpectra*1/np.max(haloSpectra)
     return haloSpectra
 
@@ -275,8 +275,8 @@ def createSemiRealSource(srcData,cube,SNR):
     of a simulated halo object. The object is centered in the real MUSE subcube
 
     """
-    dec,ra = cube.wcs.pix2sky([cube.shape[1]/2,cube.shape[2]/2])[0]
-    lmbda = cube.wave.coord(cube.shape[0]/2)
+    dec,ra = cube.wcs.pix2sky([cube.shape[1]//2,cube.shape[2]//2])[0]
+    lmbda = cube.wave.coord(cube.shape[0]//2)
     cube.data=cube.data+SNR*srcData
     src=Source.from_data(4000,ra,dec,origin='Simulated',cubes={'MUSE_CUBE':cube})
     src.add_line(['LBDA_OBS','LINE'],[lmbda,"LYALPHA"])

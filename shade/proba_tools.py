@@ -4,16 +4,22 @@ Created on Fri Dec  4 14:50:27 2015
 
 @author: raphael
 """
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 import function_Image
 from scipy.stats.mstats import mquantiles
+
 
 class EmpFunc2():
     """"
     Define an empirical cumulative distribution function with a set of values.
     """
 
-    def __init__(self,values):
+    def __init__(self, values):
         """
         Constructor of an empirical distribution.
         Param: ndarray values :The sample of the empirical values is
@@ -156,7 +162,7 @@ def connexAggr(corrMap,q,core=None,returnNeighbors=False,w=1,coeff=1.2,seed=None
             for s in seed:
                 coreMask[s[0]-core:s[0]+core+1, s[1]-core:s[1]+core+1] = True
         else:
-            coreMask[coreMask.shape[0]/2-core:coreMask.shape[0]/2+core+1,coreMask.shape[1]/2-core:coreMask.shape[1]/2+core+1]=True
+            coreMask[coreMask.shape[0]//2-core:coreMask.shape[0]//2+core+1,coreMask.shape[1]//2-core:coreMask.shape[1]//2+core+1]=True
         coreMask = coreMask.flatten()
 
         setAll = set([x for x in np.nonzero(coreMask)[0]])
@@ -258,7 +264,8 @@ def connexAggrWhole(corrMap,core=None,returnNeighbors=False,w=1,coeff=1.2,seed=N
             for s in seed:
                 coreMask[s[0]-core:s[0]+core+1, s[1]-core:s[1]+core+1] = True
         else:
-            coreMask[coreMask.shape[0]/2-core:coreMask.shape[0]/2+core+1,coreMask.shape[1]/2-core:coreMask.shape[1]/2+core+1]=True
+            coreMask[coreMask.shape[0]//2-core:coreMask.shape[0]//2+core+1,
+                     coreMask.shape[1]//2-core:coreMask.shape[1]//2+core+1]=True
         coreMask = coreMask.flatten()
 
         setAll = set([x for x in np.nonzero(coreMask)[0]])

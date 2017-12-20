@@ -5,10 +5,16 @@ Created on Thu Nov 26 15:59:23 2015
 @author: raphael
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import function_Image
 import scipy.signal as ssl
 from math import *
 import numpy as np
+
+
 
 class Preprocessing():
     """
@@ -33,7 +39,7 @@ class Preprocessing():
                     center=src.cubes['MUSE_CUBE'].wcs.sky2pix([src.dec,src.ra])[0].astype(int)
                 else:
                     #if sim is True source is supposed centered
-                    center=[src.cubes['MUSE_CUBE'].shape[1]/2,src.cubes['MUSE_CUBE'].shape[2]/2]
+                    center=[src.cubes['MUSE_CUBE'].shape[1]//2,src.cubes['MUSE_CUBE'].shape[2]//2]
                 data=src.cubes['MUSE_CUBE'][:,max(center[0]-self.params.SW,0):min(center[0]+self.params.SW+1,src.cubes['MUSE_CUBE'].shape[1]), \
                     max(center[1]-self.params.SW,0):min(center[1]+self.params.SW+1,src.cubes['MUSE_CUBE'].shape[2])]
             else:
@@ -43,14 +49,14 @@ class Preprocessing():
             if self.params.sim == False :
                 lmbda=int(data.wave.pixel(src.lines['LBDA_OBS'][src.lines['LINE']=='LYALPHA'][0]))+self.paramsPreProcess.shiftLambdaDetection
             else:
-                lmbda=data.shape[0]/2
+                lmbda=data.shape[0]//2
 
             kernel_mf=self.params.kernel_mf[max(lmbda-self.params.LW-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.params.lmbdaShift+1,self.params.kernel_mf.shape[0])]
             #Process on a spectral slice that assure that for each value in the [-LW:LW] zone of interest, there are
             #at least 2*windowRC+1 points and so the removeContinuum method will work as expected
             dataRC=self.removeContinuum(data[max(lmbda-self.params.LW-self.paramsPreProcess.windowRC-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.paramsPreProcess.windowRC+self.params.lmbdaShift+1,data.shape[0]),:,:])
 
-            lmbda=dataRC.shape[0]/2
+            lmbda=dataRC.shape[0]//2
             dataRC=dataRC[max(lmbda-self.params.LW-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.params.lmbdaShift+1,dataRC.shape[0]),:,:]
 
 

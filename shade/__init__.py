@@ -2,6 +2,6 @@
 """
 Created on Fri Dec 11 05:02:23 2015
 
-@author: raphael
+@author: raphael.bacher@gipsa-lab.fr
 """
 

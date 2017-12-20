@@ -5,9 +5,14 @@ Created on Wed Dec  2 16:58:41 2015
 @author: raphael
 """
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 from mpdaf.sdetect.source import Source
 import qvalues
+
 
 class Postprocess():
 
@@ -130,6 +135,6 @@ class Postprocess():
         A0=cubeToResize.wcs.sky2pix(cubeRef.wcs.pix2sky([0,0])[0],nearest=True)[0].astype(int)
         B1=cubeToResize.wcs.sky2pix(cubeRef.wcs.pix2sky([cubeRef.shape[1],cubeRef.shape[2]])[0],nearest=True)[0].astype(int)
         lmbda=int(cubeToResize.wave.pixel(cubeRef.wave.coord(cubeRef.shape[0]/2),nearest=True))
-        LW=cubeRef.shape[0]/2
+        LW=cubeRef.shape[0]//2
         return cubeToResize[lmbda-LW:lmbda+LW+1,A0[0]:B1[0],A0[1]:B1[1]]
 
