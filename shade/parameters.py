@@ -10,7 +10,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-import astro_utils
+from shade import astro_utils
 
 # fsf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 #                           'fsf_HDFS_v1-24.pk')

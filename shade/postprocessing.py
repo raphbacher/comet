@@ -11,7 +11,7 @@ from __future__ import print_function
 
 import numpy as np
 from mpdaf.sdetect.source import Source
-import qvalues
+from shade import qvalues
 
 
 class Postprocess():

@@ -12,10 +12,10 @@ from mpdaf.sdetect.source import Source
 from mpdaf.sdetect import Catalog
 from astropy.io import fits as pyfits
 from mpdaf.obj import Cube
-import parameters
-import preprocessing as prep
-import postprocessing as postp
-import detection
+from shade import parameters
+from shade import preprocessing as prep
+from shade import postprocessing as postp
+from shade import detection
 
 
 class SHADE():

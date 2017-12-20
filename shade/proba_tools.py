@@ -10,7 +10,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-import function_Image
+from shade import function_Image
 from scipy.stats.mstats import mquantiles
 
 
