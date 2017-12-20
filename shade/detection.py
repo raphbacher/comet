@@ -10,7 +10,7 @@ from __future__ import division
 from __future__ import print_function
 
 from .array_tools import normArr
-import proba_tools
+from shade import proba_tools
 import numpy as np
 
 
