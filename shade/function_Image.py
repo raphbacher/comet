@@ -208,7 +208,7 @@ def recenterMul(cube, w=None):
         print('got ^C while pool mapping, terminating the pool')
         pool.terminate()
         print('pool is terminated')
-    except Exception, e:
+    except Exception as e:
         print('got exception: %r, terminating the pool' % (e,))
         pool.terminate()
         print('pool is terminated')
@@ -277,7 +277,7 @@ def getParamNoiseMul(cube):
         pool.terminate()
         print('pool is terminated')
 
-    except Exception, e:
+    except Exception as e:
         print('got exception: %r, terminating the pool' % (e,))
         pool.terminate()
         print('pool is terminated')
@@ -334,7 +334,7 @@ def getStudentParamMul(cube):
         pool.terminate()
         print('pool is terminated')
 
-    except Exception, e:
+    except Exception as e:
         print('got exception: %r, terminating the pool' % (e,))
         pool.terminate()
         print('pool is terminated')

@@ -5,20 +5,29 @@ Created on Fri Dec 11 03:29:26 2015
 @author: raphael
 """
 
-import pickle
-import os
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
+import astro_utils
 
-fsf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                           'fsf_HDFS_v1-24.pk')
-DEFAULT_FSF = pickle.load(open(fsf_file,'rb'))
+# fsf_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+#                           'fsf_HDFS_v1-24.pk')
 
-DEFAULT_KERNEL_MF = np.tile(np.array([[ 0.09109594,  0.11895933,  0.09109594],
-       [ 0.11895933,  0.15977892,  0.11895933],
-       [ 0.09109594,  0.11895933,  0.09109594]])[None,:,:],(3681,1,1))
+# DEFAULT_FSF = pickle.load(open(fsf_file,'rb'))
+DEFAULT_FSF = astro_utils.generateMoffatIm(center=(12, 12), shape=(25, 25),
+                                           alpha=2, beta=2.5, dx=0., dy=0.,
+                                           dim='MUSE')
+
+#DEFAULT_KERNEL_MF = np.tile(np.array([[ 0.09109594,  0.11895933,  0.09109594],
+#       [ 0.11895933,  0.15977892,  0.11895933],
+#       [ 0.09109594,  0.11895933,  0.09109594]])[None, :, :],(3681, 1, 1))
+
+DEFAULT_KERNEL_MF = np.tile(DEFAULT_FSF[None,11:14,11:14],(3681, 1, 1))
+
 
 class Params():
-
     def __init__(self,
                  LW=20,
                  SW=None,
