@@ -101,12 +101,12 @@ class Preprocessing():
         #    Pmin=self.paramsPreProcess.Pmin, Pmax=self.paramsPreProcess.Pmax, Qmin=self.paramsPreProcess.Qmin, Qmax=self.paramsPreProcess.Qmax) #
         cubeMF=cubeContinuRemoved
         if self.paramsPreProcess.spatialCentering==True:
-            for i in xrange(cubeMF.shape[0]):
+            for i in range(cubeMF.shape[0]):
                 cubeMF[i,:,:]=f(cubeMF[i,:,:],Pmin=self.paramsPreProcess.Pmin, Pmax=self.paramsPreProcess.Pmax, Qmin=self.paramsPreProcess.Qmin, Qmax=self.paramsPreProcess.Qmax,unmask=self.paramsPreProcess.unmask)
         #cubeMF = cubeContinuRemoved
         # ---- Matched Filter (MF) ---- #
         if self.paramsPreProcess.FSFConvol==True:
-            for i in xrange(cubeMF.shape[0]):
+            for i in range(cubeMF.shape[0]):
                 cubeMF[i,:,:]=function_Image.Image_conv(cubeMF[i,:,:],kernel_mf[i],self.paramsPreProcess.unmask)
 
         #cubeMF=cubeMF.loop_ima_multiprocessing(f, cpu = 6, verbose = False,Pmin=self.paramsPreProcess.Pmin, Pmax=self.paramsPreProcess.Pmax, \
