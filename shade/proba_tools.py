@@ -233,8 +233,7 @@ def getNeighbors(k_set, arr, w=1):
         x = []
         for l in range(imax, imin+1):
             x = x+[l]*(jmin-jmax+1)
-        y = range(jmax, jmin+1)*(imin-imax+1)
-
+        y = list(range(jmax, jmin+1))*(imin-imax+1)
         neighbors = neighbors.union(set(np.ravel_multi_index([x, y], arr.shape)))
     return neighbors
 
