@@ -4,5 +4,6 @@ channels:
   - openastronomy
 dependencies:
   - matplotlib
+  - scipy=19.1
   - pip:
-    - mpdaf
+    - mpdaf=2.2
