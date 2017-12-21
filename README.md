@@ -2,7 +2,8 @@
 
 This repositery contains the code for the SHADE approach (based on empirical Benjamini & Hochberg procedure) and the COMET approach for detecting galactic halo on MUSE hyperspectral data
 
-The main application file is shade_main.py
+The main application file is shade_main.py.
+
 A Shade object is composed of a detection object, a preprocessing object and a postprocessing.
 
 Default parameters are stored in a class Params in parameters.py with specific parameters for preprocessing, detection and postprocessing.
