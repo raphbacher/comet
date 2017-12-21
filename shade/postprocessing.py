@@ -112,6 +112,7 @@ class Postprocess():
             lmbda=int(src.cubes['MUSE_CUBE'].wave.pixel(src.cubes['PROCESS_CUBE'].wave.coord(src.cubes['PROCESS_CUBE'].shape[0]//2)))
         else:
             lmbda=20
+
         res[center[0]-ll:center[0]+ll+1,center[1]-ll:center[1]+ll+1]= \
             self.params.fsf[lmbda][10-ll:10+ll+1,10-ll:10+ll+1]>0.01
         Im.data=res.astype(np.int)

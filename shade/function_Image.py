@@ -73,7 +73,7 @@ def fine_clipping(Image, niter=20, fact_value=0.9, Pmin=0, Pmax=-1, Qmin=0,
     return Image1
 
 
-def fine_clipping2(Image, niter=20, fact_value=0.9, Pmin=0, Pmax=-1,
+def fine_clipping2(Image, niter=10, fact_value=0.9, Pmin=0, Pmax=-1,
                    Qmin=0, Qmax=-1, unmask=True):
     P, Q = Image.shape
     if Qmax == -1:
@@ -110,13 +110,17 @@ def fine_clipping2(Image, niter=20, fact_value=0.9, Pmin=0, Pmax=-1,
         lim=np.searchsorted(x_sorted,[medclip-facttrunc*stdclip,medclip+facttrunc*stdclip])
         xclip = x_sorted[lim[0]:lim[1]]
         oldoldmedclip = oldmedclip
+
         oldmedclip = medclip
         oldstdclip = stdclip
+
         medclip = middle(xclip)
+
         qlclip = percent(xclip, 25)
         stdclip = 2*np.abs(medclip - qlclip)/correction
 
         if oldoldmedclip == medclip:  # gestion des cycles
+
             if stdclip > oldstdclip:
                 break
             else:
@@ -137,9 +141,8 @@ def fine_clipping2(Image, niter=20, fact_value=0.9, Pmin=0, Pmax=-1,
 
 def middle(L):
 
-    n = len(L)
-    m = n - 1
-    return (L[n//2] + L[m//2]) / 2.0
+    n = int(len(L))
+    return (L[n//2] + L[n//2-1]) / 2.0
 
 
 def percent(L, q):

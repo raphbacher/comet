@@ -14,8 +14,6 @@ import scipy.signal as ssl
 from math import *
 import numpy as np
 
-
-
 class Preprocessing():
     """
 
@@ -44,8 +42,10 @@ class Preprocessing():
                     max(center[1]-self.params.SW,0):min(center[1]+self.params.SW+1,src.cubes['MUSE_CUBE'].shape[2])]
             else:
                 data=src.cubes['MUSE_CUBE']
+
             if self.paramsPreProcess.unmask==True:
                 data.data[:]=data.data.filled(np.nanmedian(data.data))
+
             if self.params.sim == False :
                 lmbda=int(data.wave.pixel(src.lines['LBDA_OBS'][src.lines['LINE']=='LYALPHA'][0]))+self.paramsPreProcess.shiftLambdaDetection
             else:
@@ -54,8 +54,8 @@ class Preprocessing():
             kernel_mf=self.params.kernel_mf[max(lmbda-self.params.LW-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.params.lmbdaShift+1,self.params.kernel_mf.shape[0])]
             #Process on a spectral slice that assure that for each value in the [-LW:LW] zone of interest, there are
             #at least 2*windowRC+1 points and so the removeContinuum method will work as expected
-            dataRC=self.removeContinuum(data[max(lmbda-self.params.LW-self.paramsPreProcess.windowRC-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.paramsPreProcess.windowRC+self.params.lmbdaShift+1,data.shape[0]),:,:])
 
+            dataRC=self.removeContinuum(data[max(lmbda-self.params.LW-self.paramsPreProcess.windowRC-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.paramsPreProcess.windowRC+self.params.lmbdaShift+1,data.shape[0]),:,:])
             lmbda=dataRC.shape[0]//2
             dataRC=dataRC[max(lmbda-self.params.LW-self.params.lmbdaShift,0):min(lmbda+self.params.LW+self.params.lmbdaShift+1,dataRC.shape[0]),:,:]
 
