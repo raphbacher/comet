@@ -139,7 +139,7 @@ def middle(L):
 
     n = len(L)
     m = n - 1
-    return (L[n/2] + L[m/2]) / 2.0
+    return (L[n//2] + L[m//2]) / 2.0
 
 
 def percent(L, q):
@@ -364,6 +364,6 @@ def Image_conv(im, tab, unmask=True):
     else:
         res = ssl.fftconvolve(im.data, tab, 'full')
     a, b = tab.shape
-    im_tmp = Image(data=res[int(a-1)/2:im.data.shape[0] + (a-1)/2,
-                            (b-1)/2:im.data.shape[1]+(b-1)/2])
+    im_tmp = Image(data=res[int(a-1)//2:im.data.shape[0] + (a-1)//2,
+                            (b-1)//2:im.data.shape[1]+(b-1)//2])
     return im_tmp.data

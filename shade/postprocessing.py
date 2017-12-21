@@ -109,7 +109,7 @@ class Postprocess():
         center=src.cubes['PROCESS_CUBE'].wcs.sky2pix([src.dec,src.ra])[0].astype(int)
         ll=int(min([7,center[0],mask.shape[0]-center[0]-1,center[1],mask.shape[1]-center[1]-1]))
         if self.params.sim ==False:
-            lmbda=int(src.cubes['MUSE_CUBE'].wave.pixel(src.cubes['PROCESS_CUBE'].wave.coord(src.cubes['PROCESS_CUBE'].shape[0]/2)))
+            lmbda=int(src.cubes['MUSE_CUBE'].wave.pixel(src.cubes['PROCESS_CUBE'].wave.coord(src.cubes['PROCESS_CUBE'].shape[0]//2)))
         else:
             lmbda=20
         res[center[0]-ll:center[0]+ll+1,center[1]-ll:center[1]+ll+1]= \

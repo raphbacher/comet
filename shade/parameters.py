@@ -16,15 +16,16 @@ from shade import astro_utils
 #                           'fsf_HDFS_v1-24.pk')
 
 # DEFAULT_FSF = pickle.load(open(fsf_file,'rb'))
-DEFAULT_FSF = astro_utils.generateMoffatIm(center=(12, 12), shape=(25, 25),
+DEFAULT_FSF_0 = astro_utils.generateMoffatIm(center=(12, 12), shape=(25, 25),
                                            alpha=2, beta=2.5, dx=0., dy=0.,
                                            dim='MUSE')
+DEFAULT_FSF = np.tile(DEFAULT_FSF_0[None,: , :],(3681, 1, 1))
 
 #DEFAULT_KERNEL_MF = np.tile(np.array([[ 0.09109594,  0.11895933,  0.09109594],
 #       [ 0.11895933,  0.15977892,  0.11895933],
 #       [ 0.09109594,  0.11895933,  0.09109594]])[None, :, :],(3681, 1, 1))
 
-DEFAULT_KERNEL_MF = np.tile(DEFAULT_FSF[None,11:14,11:14],(3681, 1, 1))
+DEFAULT_KERNEL_MF = np.tile(DEFAULT_FSF_0[None,11:14,11:14],(3681, 1, 1))
 
 
 class Params():
