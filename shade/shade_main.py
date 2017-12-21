@@ -58,7 +58,7 @@ class SHADE():
         elif listSources is None and listID is None:
             hdulist=pyfits.open(catalog)
             listID=[]
-            for k in xrange(len(hdulist[1].data)):
+            for k in range(len(hdulist[1].data)):
                 if hdulist[1].data[k][1]=='Lya' and hdulist[1].data[k][4]>0:#We get all Lyman alpha with a defined redshift
                     listID.append(hdulist[1].data[k][0])
             self.listSources=[]
