@@ -87,7 +87,7 @@ class Detection:
         #centering (or not)
         if self.paramsDetection.centering=='all':
             meanIm=np.mean(zoneCentr,axis=0)
-            for i in xrange(zoneCentr.shape[0]):
+            for i in range(zoneCentr.shape[0]):
                 zoneCentr[i,:,:]=zoneCentr[i,:,:]-meanIm
 
         #Compute the target spectrum by averaging pixels around the center of the galaxy, then create a list of shifted versions.
@@ -97,7 +97,7 @@ class Detection:
 
             listRef=[(np.mean(np.mean( \
                 zoneLarge[:,refPos[0]-self.paramsDetection.windowRef:refPos[0]+self.paramsDetection.windowRef+1, \
-                refPos[1]-self.paramsDetection.windowRef:refPos[1]+self.paramsDetection.windowRef+1],axis=2),axis=1))[start+k:start+zoneCentr.shape[0]+k] for k in xrange(2*self.params.lmbdaShift+1)]
+                refPos[1]-self.paramsDetection.windowRef:refPos[1]+self.paramsDetection.windowRef+1],axis=2),axis=1))[start+k:start+zoneCentr.shape[0]+k] for k in range(2*self.params.lmbdaShift+1)]
 
         if (self.paramsDetection.centering=='ref') or (self.paramsDetection.centering=='all'):
             for l,ref in enumerate(listRef):
@@ -116,9 +116,9 @@ class Detection:
 
         #Compute dot product between data and the list of referenced spectra
         res=np.zeros((len(listRef),zoneNorm.shape[1],zoneNorm.shape[2]))
-        for k in xrange(len(listRef)):
-            for i in xrange(res.shape[1]):
-                for j in xrange(res.shape[2]):
+        for k in range(len(listRef)):
+            for i in range(res.shape[1]):
+                for j in range(res.shape[2]):
                     res[k,i,j]=np.dot(zoneNorm[:,i,j],listRef[k])
 
         return res,listRef
