@@ -64,10 +64,10 @@ class SourceSim():
                 self.linkGal2(k[0],k[1],intens)
 
         if spectraSourcesLmbda is not None:
-            for k in xrange(len(spectraSourcesLmbda)):
+            for k in range(len(spectraSourcesLmbda)):
                 self.spectraSources.append(createSpectra(spectraSourcesLmbda[k],shape[0],width=5))
-                for i in xrange(shape[1]):
-                    for j in xrange(shape[2]):
+                for i in range(shape[1]):
+                    for j in range(shape[2]):
                         if self.label[i,j]==k+1:
 
                             if variation !=0:
@@ -188,7 +188,7 @@ class SourceSim():
         dist=dists.cdist(a,a)
         self.covar= self.noise*self.rho**dist
         self.covar[self.covar<0.01]=0
-        for k in xrange(self.shape[0]):
+        for k in range(self.shape[0]):
             self.noiseCube[k]=np.random.multivariate_normal(np.zeros(self.shape[1]*self.shape[2]),self.covar,size=1).reshape(self.shape[1],self.shape[2])
 
 
@@ -211,7 +211,7 @@ def buildMaskSources(listCenter,listRadius,shape,decrease):
     #on crée un profil spatial gaussien
     mask=np.zeros((shape[1],shape[2]))
     label=np.zeros((shape[1],shape[2]))
-    for k in xrange(len(listCenter)):
+    for k in range(len(listCenter)):
         zGalaxy = multivariate_normal.pdf(np.swapaxes(np.swapaxes([x,y],0,2),0,1),mean=listCenter[k], cov=[[listRadius[k]/1.17, 0], [0, listRadius[k]/1.17]])
         zGalaxy= zGalaxy*1/np.max(zGalaxy)
         zGalaxy[zGalaxy<0.1]=0
@@ -256,7 +256,7 @@ def buildRandomMaskSources(shape=(40,51,51),listCenter=[(25,25)],listRadius=[15]
     label[mask==True]=1
     if len(listCenter)>1:
         x,y=np.mgrid[0:shape[1], 0:shape[2]]
-        for k in xrange(1,len(listCenter)):
+        for k in range(1,len(listCenter)):
             zGalaxy = multivariate_normal.pdf(np.swapaxes(np.swapaxes([x,y],0,2),0,1),mean=listCenter[k], cov=[[listRadius[k]/1.17, 0], [0, listRadius[k]/1.17]])
             zGalaxy= zGalaxy*1/np.max(zGalaxy)
             zGalaxy[zGalaxy<0.1]=0
