@@ -104,7 +104,7 @@ def calcPvalue(corrMap,H0=None,correct=True):
     #For each correlation map (resulting from the correlation with one reference), we estimate
     #the parameter of a student distribution
 
-    for k in xrange(len(corrMap)):
+    for k in range(len(corrMap)):
         #res=function_Image.getStudentParam(corrMap[k],runLikelihood=True)
         res=function_Image.getParamNoise(corrMap[k])
         listM_Corr.append(res[0])
@@ -114,7 +114,7 @@ def calcPvalue(corrMap,H0=None,correct=True):
     # with the estimated mean parameter we center each map to ensure that the null hypothesis is
     #symmetric.
     resCorrCentr=np.zeros_like(corrMap)
-    for k in xrange(len(resCorrCentr)):
+    for k in range(len(resCorrCentr)):
         resCorrCentr[k]=corrMap[k]-listM_Corr[k]
         #resCorrCentr[k]=corrMap[k]
 
@@ -146,7 +146,7 @@ def calcPvalue(corrMap,H0=None,correct=True):
 
 
 def connexAggr(corrMap,q,core=None,returnNeighbors=False,w=1,coeff=1.2,seed=None):
-    corrArr = corrMap-np.array([function_Image.getParamNoise(corrMap[k])[0] for k in xrange(len(corrMap))])[:,None,None]
+    corrArr = corrMap-np.array([function_Image.getParamNoise(corrMap[k])[0] for k in range(len(corrMap))])[:,None,None]
     maxVal = np.max(corrArr, axis=0)
     minVal = -np.min(corrArr, axis=0)
     minValF = minVal.flatten()
@@ -248,7 +248,7 @@ def getMask(listDetected, arr):
 
 
 def connexAggrWhole(corrMap,core=None,returnNeighbors=False,w=1,coeff=1.2,seed=None):
-    corrArr = corrMap-np.array([function_Image.getParamNoise(corrMap[k])[0] for k in xrange(len(corrMap))])[:,None,None]
+    corrArr = corrMap-np.array([function_Image.getParamNoise(corrMap[k])[0] for k in range(len(corrMap))])[:,None,None]
     maxVal = np.max(corrArr, axis=0)
     minVal = -np.min(corrArr, axis=0)
     minValF = minVal.flatten()
