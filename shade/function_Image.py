@@ -52,7 +52,7 @@ def fine_clipping(Image, niter=20, fact_value=0.9, Pmin=0, Pmax=-1, Qmin=0,
     stdclip = 2.*(medclip - qlclip)/1.349
     oldmedclip = 1.
 
-    for i in xrange(niter):
+    for i in range(niter):
         try:
             # on garde la symetrie dans la troncature
             xclip = x[np.where(((x-medclip) < facttrunc*stdclip) &
@@ -178,7 +178,7 @@ def recenter(Image1, niter=3, lmbda=1., fact_value=0.8, Pmin=0, Pmax=-1,
     medclip = 0.
 
     oldmedclip = 1.
-    for i in xrange(niter):
+    for i in range(niter):
         if medclip != oldmedclip:
             # on garde la symetrie dans la troncature
             xclip = x[np.where(((x-medclip) < lmbda*stdclip) &
@@ -247,7 +247,7 @@ def getParamNoise(Image1, niter=10, fact_value=0.9, Pmin=0, Pmax=-1,
     qlclip = np.percentile(xclip, 25)
     stdclip = 2.*(medclip - qlclip)/1.349
 
-    for i in xrange(niter):
+    for i in range(niter):
         # on garde la symetrie dans la troncature
         xclip = x[np.where(((x-medclip) < facttrunc*stdclip) &
                            ((x-medclip) > -facttrunc*stdclip))]
