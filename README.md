@@ -10,5 +10,7 @@ Default parameters are stored in a class Params in parameters.py with specific p
 To install:
 python setup.py install
 
-To test in a binder environment:
+To have a step by step tutorial see the notebook Example SHade.ipynb
+
+To test the notebook in a binder environment:
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/raphbacher/comet/master)
